@@ -2,10 +2,7 @@
 
 import base64
 import csv
-import os
 import requests
-import sqlite3
-import threading
 import urllib
 
 api = 'http://localhost:18469/api/v1'
