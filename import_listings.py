@@ -35,15 +35,25 @@ with open('listings.csv', 'rU') as f:
         image = urllib.urlopen(listing['IMAGE1'])
         image_64 = base64.encodestring(image.read())
 
+        # Upload to server and get hash
+        payload = {
+            'image': image_64
+        }
+        image_hashes = s.post('%s/upload_image' % api, data=payload)
+        image_hashes = image_hashes.json()
+
+        # Separate comma-separated tags
+        tags = [x.strip() for x in listing['TAGS'].split(',')]
+
         # Insert listing into OB
         payload = {
-            'keywords': listing['TAGS'],
+            'keywords': tags,
             'title': listing['TITLE'],
             'description': listing['DESCRIPTION'],
             'currency_code': listing['CURRENCY_CODE'],
             'price': listing['PRICE'],
             'process_time': 'TBD',
-            'images': [image_64],
+            'images': image_hashes['image_hashes'],
             'expiration_date': '',
             'metadata_category': 'physical good',
             'nsfw': 'false',
@@ -55,7 +65,9 @@ with open('listings.csv', 'rU') as f:
             'category': '',
             'condition': '',
             'sku': '',
-            'free_shipping': 'false'
+            'free_shipping': 'false',
+            'ships_to': ['all'],
+            'shipping_origin': 'UNITED_STATES'
         }
         posted = s.post('%s/contracts' % api, data=payload)
         print posted.json()
