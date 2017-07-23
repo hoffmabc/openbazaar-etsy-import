@@ -1,1 +1,5 @@
 .idea/
+env
+venv
+*/etsy_to_openbazaar.egg-info
+*.pyc
